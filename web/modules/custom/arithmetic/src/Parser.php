@@ -95,7 +95,8 @@ class Parser implements ParserInterface {
       array_pop($op_stack);
       return;
     }
-    throw new ArithmeticException("Unallowed character in expression.");
+    $stack = debug_backtrace(FALSE, 2);
+    throw new ArithmeticException("Unallowed character in expression " . $stack[1]['args'][0]);
   }
 
   /**
@@ -128,7 +129,7 @@ class Parser implements ParserInterface {
         $stack[$j] = isset($stack[$j]) ? $stack[$j] . $string[$i] : $string[$i];
         continue;
       }
-      throw new ArithmeticException('Unallowed character in expression.');
+      throw new ArithmeticException('Unallowed character in expression ' . $string);
     }
     return $stack;
   }
@@ -153,7 +154,8 @@ class Parser implements ParserInterface {
       }
       if (!isset($stack[$i - 1]) || !isset($stack[$i - 2]) ||
         !ctype_digit($stack[$i - 1]) || !ctype_digit($stack[$i - 2])) {
-        throw new ArithmeticException('Error while reducing stack');
+        $stack = debug_backtrace(FALSE, 2);
+        throw new ArithmeticException('Error while reducing stack on expression ' . $stack[1]['args'][0]);
       }
       switch ($stack[$i]) {
         case '+':
@@ -181,7 +183,8 @@ class Parser implements ParserInterface {
         $new[$j - 2] = $stack[$j];
       }
       if (count($new) != ($count - 2)) {
-        throw new ArithmeticException('Error while reducing stack.');
+        $stack = debug_backtrace(FALSE, 2);
+        throw new ArithmeticException('Error while reducing stack on expresiion ' . $stack[1]['args'][0]);
       }
       $stack = $new;
     } while (count($stack) > 1);
