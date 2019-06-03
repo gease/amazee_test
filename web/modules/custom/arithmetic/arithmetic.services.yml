@@ -1,0 +1,3 @@
+services:
+  arithmetic.parser:
+    class: Drupal\arithmetic\Parser

@@ -1,0 +1,12 @@
+.arithmetic-infix .result {
+  display: none;
+}
+.arithmetic-infix .source {
+  display: block;
+}
+.arithmetic-infix:hover .source {
+  display: none;
+}
+.arithmetic-infix:hover .result {
+  display: block;
+}

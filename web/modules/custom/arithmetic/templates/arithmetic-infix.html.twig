@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Basic implementation of arithmetic formatter.
+ *
+ * Available variables:
+ * - result: The calculated value.
+ * - source: The original expression.
+ * @ingroup themeable
+ */
+
+#}
+{{ attach_library('arithmetic/formatter') }}
+<div class="arithmetic-infix">
+  <div class="result"> {{ result }} </div>
+  <div class="source"> {{ source }} </div>
+</div>

@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function arithmetic_theme($existing, $type, $theme, $path) {
+  $theme = [];
+
+  $theme['arithmetic_infix'] = [
+    'variables' => [
+      'source' => NULL,
+      'result' => NULL,
+    ],
+  ];
+
+  return $theme;
+}

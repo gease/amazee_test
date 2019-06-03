@@ -1,0 +1,4 @@
+formatter:
+  css:
+    component:
+      css/formatter.css: {}

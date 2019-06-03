@@ -1,0 +1,5 @@
+name: Arithmetic
+description: Provides parser and field formatter for simple arithmetic expressions.
+
+type: module
+core: '8.x'
