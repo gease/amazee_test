@@ -1,12 +1,16 @@
 .arithmetic-infix .result {
-  display: none;
+  opacity: 0;
+  transition: opacity 1s;
+  font-style: italic;
 }
 .arithmetic-infix .source {
-  display: block;
+  margin-top: -1.5em;
+  opacity: 1;
+  transition: opacity 1s;
 }
 .arithmetic-infix:hover .source {
-  display: none;
+  opacity: 0;
 }
 .arithmetic-infix:hover .result {
-  display: block;
+  opacity: 1;
 }
