@@ -81,6 +81,9 @@ class ParserTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Data provider for parsing infix string to postfix stack.
+   */
   public function stringsParseProvider() {
     return [
       ['10+5', ['10', '5', '+']],
