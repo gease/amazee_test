@@ -11,7 +11,12 @@
 
 #}
 {{ attach_library('arithmetic/formatter') }}
-<div class="arithmetic-infix">
+{% set error_message = "Malformed expression."|trans %}
+{% set classes = "arithmetic-infix" %}
+{% if result == error_message %}
+  {% set classes = classes ~ " error" %}
+{% endif %}
+<div class="{{ classes }}">
   <div class="result"> {{ result }} </div>
   <div class="source"> {{ source }} </div>
 </div>
