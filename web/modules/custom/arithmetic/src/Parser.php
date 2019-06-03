@@ -184,7 +184,7 @@ class Parser implements ParserInterface {
       }
       if (count($new) != ($count - 2)) {
         $stack = debug_backtrace(FALSE, 2);
-        throw new ArithmeticException('Error while reducing stack on expresiion ' . $stack[1]['args'][0]);
+        throw new ArithmeticException('Error while reducing stack on expression ' . $stack[1]['args'][0]);
       }
       $stack = $new;
     } while (count($stack) > 1);
