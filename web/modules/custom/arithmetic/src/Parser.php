@@ -25,16 +25,16 @@ class Parser implements ParserInterface {
    * {@inheritdoc}
    */
   public function calculatePostfix($string) {
-    $stack = $this->parsePostfix($string);
-    return $this->reduceStack($stack);
+    $queue = $this->parsePostfix($string);
+    return $this->reduceQueue($queue);
   }
 
   /**
    * {@inheritdoc}
    */
   public function calculateInfix($string) {
-    $stack = $this->parseInfix($string);
-    return $this->reduceStack($stack);
+    $queue = $this->parseInfix($string);
+    return $this->reduceQueue($queue);
   }
 
   /**
@@ -44,7 +44,7 @@ class Parser implements ParserInterface {
    *    Input string representing arithmetical expression in infix notation.
    *
    * @return array
-   *    Parsed stack
+   *    Parsed queue
    */
   protected function parseInfix($string) {
     $queue = [];
@@ -112,7 +112,7 @@ class Parser implements ParserInterface {
    */
   protected function parsePostfix($string) {
     $l = strlen($string);
-    $stack = [];
+    $queue = [];
     // Stack index.
     $j = 0;
     for ($i = 0; $i < $l; $i++) {
@@ -121,74 +121,74 @@ class Parser implements ParserInterface {
           $j++;
         }
         if (in_array($string[$i], $this->signs)) {
-          $stack[$j] = $string[$i];
+          $queue[$j] = $string[$i];
         }
         continue;
       }
       if (ctype_digit($string[$i])) {
-        $stack[$j] = isset($stack[$j]) ? $stack[$j] . $string[$i] : $string[$i];
+        $queue[$j] = isset($queue[$j]) ? $queue[$j] . $queue[$i] : $queue[$i];
         continue;
       }
       throw new ArithmeticException('Unallowed character in expression ' . $string);
     }
-    return $stack;
+    return $queue;
   }
 
   /**
-   * Calculates the value of expression from postfix stack.
+   * Calculates the value of expression from postfix queue.
    *
-   * @param array $stack
-   *    Postfix stack.
+   * @param array $queue
+   *    Postfix queue.
    *
    * @return string
    *    A number - value of expression.
    *
    * @throws \Drupal\arithmetic\ArithmeticException
    */
-  protected function reduceStack($stack) {
+  protected function reduceQueue($queue) {
     do {
-      $count = count($stack);
+      $count = count($queue);
       $i = 0;
-      while (ctype_digit($stack[$i])) {
+      while (ctype_digit($queue[$i])) {
         $i++;
       }
-      if (!isset($stack[$i - 1]) || !isset($stack[$i - 2]) ||
-        !ctype_digit($stack[$i - 1]) || !ctype_digit($stack[$i - 2])) {
+      if (!isset($queue[$i - 1]) || !isset($queue[$i - 2]) ||
+        !ctype_digit($queue[$i - 1]) || !ctype_digit($queue[$i - 2])) {
         $stack = debug_backtrace(FALSE, 2);
-        throw new ArithmeticException('Error while reducing stack on expression ' . $stack[1]['args'][0]);
+        throw new ArithmeticException('Error while reducing queue on expression ' . $stack[1]['args'][0]);
       }
-      switch ($stack[$i]) {
+      switch ($queue[$i]) {
         case '+':
-          $res = $stack[$i - 2] + $stack[$i - 1];
+          $res = $queue[$i - 2] + $queue[$i - 1];
           break;
 
         case '-':
-          $res = $stack[$i - 2] - $stack[$i - 1];
+          $res = $queue[$i - 2] - $queue[$i - 1];
           break;
 
         case '*':
-          $res = $stack[$i - 2] * $stack[$i - 1];
+          $res = $queue[$i - 2] * $queue[$i - 1];
           break;
 
         case '/':
-          $res = $stack[$i - 2] / $stack[$i - 1];
+          $res = $queue[$i - 2] / $queue[$i - 1];
           break;
       }
       $new = [];
       for ($j = 0; $j < $i - 2; $j++) {
-        $new[$j] = $stack[$j];
+        $new[$j] = $queue[$j];
       }
       $new[$i - 2] = (string) $res;
-      for ($j = $i + 1; $j < count($stack); $j++) {
-        $new[$j - 2] = $stack[$j];
+      for ($j = $i + 1; $j < count($queue); $j++) {
+        $new[$j - 2] = $queue[$j];
       }
       if (count($new) != ($count - 2)) {
         $stack = debug_backtrace(FALSE, 2);
         throw new ArithmeticException('Error while reducing stack on expression ' . $stack[1]['args'][0]);
       }
-      $stack = $new;
-    } while (count($stack) > 1);
-    return $stack[0];
+      $queue = $new;
+    } while (count($queue) > 1);
+    return $queue[0];
   }
 
 }
