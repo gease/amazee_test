@@ -1,3 +1,3 @@
 services:
-  arithmetic.parser:
-    class: Drupal\arithmetic\Parser
+  arithmetic.calculator:
+    class: Drupal\arithmetic\Calculator

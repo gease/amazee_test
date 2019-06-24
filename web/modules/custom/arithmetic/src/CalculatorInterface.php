@@ -4,7 +4,7 @@
 namespace Drupal\arithmetic;
 
 
-interface ParserInterface {
+interface CalculatorInterface {
 
   /**
    * Parse and calculate the expression in postfix notation.

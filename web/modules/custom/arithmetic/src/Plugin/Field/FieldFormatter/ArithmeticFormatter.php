@@ -5,7 +5,7 @@ namespace Drupal\arithmetic\Plugin\Field\FieldFormatter;
 
 
 use Drupal\arithmetic\ArithmeticException;
-use Drupal\arithmetic\ParserInterface;
+use Drupal\arithmetic\CalculatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -30,7 +30,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ArithmeticFormatter extends FormatterBase implements ContainerFactoryPluginInterface{
 
-  protected $parser;
+  protected $calculator;
 
   /**
    * {@inheritdoc}
@@ -44,7 +44,7 @@ class ArithmeticFormatter extends FormatterBase implements ContainerFactoryPlugi
       $configuration['label'],
       $configuration['view_mode'],
       $configuration['third_party_settings'],
-      $container->get('arithmetic.parser'),
+      $container->get('arithmetic.calculator'),
       $container->get('logger.factory')
     );
   }
@@ -66,13 +66,13 @@ class ArithmeticFormatter extends FormatterBase implements ContainerFactoryPlugi
    *   The view mode.
    * @param array $third_party_settings
    *   Any third party settings settings.
-   * @param \Drupal\arithmetic\ParserInterface $parser
+   * @param \Drupal\arithmetic\CalculatorInterface $parser
    *   Parser for arithmetical expressions.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, ParserInterface $parser, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, CalculatorInterface $calculator, LoggerChannelFactoryInterface $logger_factory) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
 
-    $this->parser = $parser;
+    $this->calculator = $calculator;
     $this->logger = $logger_factory->get('widget');
   }
   /**
@@ -83,7 +83,7 @@ class ArithmeticFormatter extends FormatterBase implements ContainerFactoryPlugi
 
     foreach ($items as $delta => $item) {
       try {
-        $markup = $this->parser->calculateInfix($item->value);
+        $markup = $this->calculator->calculateInfix($item->value);
       }
       catch (ArithmeticException $e) {
         $markup = t('Malformed expression.');

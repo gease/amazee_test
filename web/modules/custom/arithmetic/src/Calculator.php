@@ -8,7 +8,7 @@ namespace Drupal\arithmetic;
  *
  * @package Drupal\arithmetic
  */
-class Parser implements ParserInterface {
+class Calculator implements CalculatorInterface {
 
   protected $delimiter = ' ';
 

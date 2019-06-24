@@ -5,7 +5,7 @@ namespace Drupal\Tests\arithmetic\Unit;
 
 
 use Drupal\Tests\UnitTestCase;
-use Drupal\arithmetic\Parser;
+use Drupal\arithmetic\Calculator;
 use Drupal\arithmetic\ArithmeticException;
 
 /**
@@ -13,12 +13,12 @@ use Drupal\arithmetic\ArithmeticException;
  *
  * @group arithmetic
  *
- * @coversDefaultClass \Drupal\arithmetic\Parser
+ * @coversDefaultClass \Drupal\arithmetic\Calculator
  */
-class ParserTest extends UnitTestCase {
+class CalculatorTest extends UnitTestCase {
 
-  /* @var \Drupal\arithmetic\ParserInterface $parser */
-  protected $parser;
+  /* @var \Drupal\arithmetic\CalculatorInterface $calculator */
+  protected $calculator;
 
   /* @var \ReflectionMethod $parseInfix */
   protected $parseInfix;
@@ -28,9 +28,9 @@ class ParserTest extends UnitTestCase {
    */
   public function setUp() {
     parent::setUp();
-    $this->parser = new Parser();
-    $reflection_parser = new \ReflectionClass($this->parser);
-    $this->parseInfix = $reflection_parser->getMethod('parseInfix');
+    $this->calculator = new Calculator();
+    $reflection_calculator = new \ReflectionClass($this->calculator);
+    $this->parseInfix = $reflection_calculator->getMethod('parseInfix');
     $this->parseInfix->setAccessible(TRUE);
   }
 
@@ -39,7 +39,7 @@ class ParserTest extends UnitTestCase {
    * @dataProvider stringsProvider
    */
   public function testCalculateInfix($string, $expected) {
-    $this->assertEquals($expected, $this->parser->calculateInfix($string));
+    $this->assertEquals($expected, $this->calculator->calculateInfix($string));
   }
 
   /**
@@ -48,7 +48,7 @@ class ParserTest extends UnitTestCase {
    */
   public function testCalculateInfixExceptions($string) {
     $this->expectException(ArithmeticException::class);
-    $this->parser->calculateInfix($string);
+    $this->calculator->calculateInfix($string);
   }
 
   /**
@@ -56,7 +56,7 @@ class ParserTest extends UnitTestCase {
    * @dataProvider stringsParseProvider
    */
   public function testParseInfix($string, $expected) {
-    $this->assertEquals($expected, $this->parseInfix->invokeArgs($this->parser, [$string]));
+    $this->assertEquals($expected, $this->parseInfix->invokeArgs($this->calculator, [$string]));
   }
 
   /**
