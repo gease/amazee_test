@@ -22,6 +22,8 @@ class CalculatorTest extends UnitTestCase {
 
   /* @var \ReflectionMethod $parseInfix */
   protected $parseInfix;
+  /* @var \ReflectionMethod $parsePostfix */
+  protected $parsePostfix;
 
   /**
    * {inheritdoc}
@@ -32,14 +34,24 @@ class CalculatorTest extends UnitTestCase {
     $reflection_calculator = new \ReflectionClass($this->calculator);
     $this->parseInfix = $reflection_calculator->getMethod('parseInfix');
     $this->parseInfix->setAccessible(TRUE);
+    $this->parsePostfix = $reflection_calculator->getMethod('parsePostfix');
+    $this->parsePostfix->setAccessible(TRUE);
   }
 
   /**
    * @covers ::calculateInfix
-   * @dataProvider stringsProvider
+   * @dataProvider stringsInfixProvider
    */
   public function testCalculateInfix($string, $expected) {
     $this->assertEquals($expected, $this->calculator->calculateInfix($string));
+  }
+
+  /**
+   * @covers ::calculatePostfix
+   * @dataProvider stringsPostfixProvider
+   */
+  public function testCalculatePostfix($string, $expected) {
+    $this->assertEquals($expected, $this->calculator->calculatePostfix($string));
   }
 
   /**
@@ -53,20 +65,39 @@ class CalculatorTest extends UnitTestCase {
 
   /**
    * @covers ::parseInfix
-   * @dataProvider stringsParseProvider
+   * @dataProvider stringsParseInfixProvider
    */
   public function testParseInfix($string, $expected) {
     $this->assertEquals($expected, $this->parseInfix->invokeArgs($this->calculator, [$string]));
   }
 
   /**
+   * @covers ::parsePostfix
+   * @dataProvider stringsParsePostfixProvider
+   */
+  public function testParsePostfix($string, $expected) {
+    $this->assertEquals($expected, $this->parsePostfix->invokeArgs($this->calculator, [$string]));
+  }
+
+  /**
    * Data provider to test infix calculation.
    */
-  public function stringsProvider() {
+  public function stringsInfixProvider() {
     return [
       ['10+5', '15'],
       ['12-(4*3)', '0'],
       ['15/3-(2+(6-4))', '1'],
+    ];
+  }
+
+  /**
+   * Data provider to test postfix calculation.
+   */
+  public function stringsPostfixProvider() {
+    return [
+      ['10 5 +', '15'],
+      ['12 4 + 3 *', '48'],
+      ['10 5 3 * +', '25'],
     ];
   }
 
@@ -82,12 +113,24 @@ class CalculatorTest extends UnitTestCase {
   }
 
   /**
-   * Data provider for parsing infix string to postfix stack.
+   * Data provider for parsing infix string to postfix queue.
    */
-  public function stringsParseProvider() {
+  public function stringsParseInfixProvider() {
     return [
       ['10+5', ['10', '5', '+']],
       ['(12+4)*3', ['12', '4', '+', '3', '*']],
     ];
   }
+
+  /**
+   * Data provider for parsing postfix string to postfix queue.
+   */
+  public function stringsParsePostfixProvider() {
+    return [
+      ['10 5 +', ['10', '5', '+']],
+      ['12 4 + 3 *', ['12', '4', '+', '3', '*']],
+      ['10 5 3 * +', ['10', '5', '3', '*', '+']],
+    ];
+  }
+
 }
