@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -66,7 +67,7 @@ class ArithmeticFormatter extends FormatterBase implements ContainerFactoryPlugi
    *   The view mode.
    * @param array $third_party_settings
    *   Any third party settings settings.
-   * @param \Drupal\arithmetic\CalculatorInterface $parser
+   * @param \Drupal\arithmetic\CalculatorInterface $calculator
    *   Parser for arithmetical expressions.
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, $label, $view_mode, array $third_party_settings, CalculatorInterface $calculator, LoggerChannelFactoryInterface $logger_factory) {
@@ -75,6 +76,32 @@ class ArithmeticFormatter extends FormatterBase implements ContainerFactoryPlugi
     $this->calculator = $calculator;
     $this->logger = $logger_factory->get('widget');
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultSettings() {
+    $settings = parent::defaultSettings();
+    $settings['notation'] = 'infix';
+    return $settings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $form = parent::settingsForm($form, $form_state);
+    $form['notation'] = [
+      '#type' => 'select',
+      '#options' => [
+        'infix' => t('Infix'),
+        'postfix' => t('Postfix'),
+      ],
+      '#default_value' => $this->getSetting('notation'),
+    ];
+    return $form;
+  }
+
   /**
    * {@inheritdoc}
    */
@@ -83,7 +110,15 @@ class ArithmeticFormatter extends FormatterBase implements ContainerFactoryPlugi
 
     foreach ($items as $delta => $item) {
       try {
-        $markup = $this->calculator->calculateInfix($item->value);
+        if ($this->getSetting('notation') == 'infix') {
+          $markup = $this->calculator->calculateInfix($item->value);
+        }
+        elseif ($this->getSetting('notation') == 'postfix') {
+          $markup = $this->calculator->calculatePostfix($item->value);
+        }
+        else {
+          throw new \Exception('No notation defined');
+        }
       }
       catch (ArithmeticException $e) {
         $markup = t('Malformed expression.');
