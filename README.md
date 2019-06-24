@@ -6,5 +6,6 @@ Steps to install and run the site:
 * Enable module called "Arithmetic".
 * Create some content type that has a field of **Text(plain)** type.
 * In the **Manage display** tab, select **Calculated value** formatter for that field.
+* Select the format of input string in the formatter options: infix (default, which coresponds to usual way of writing expressions) or postfix.
 * Enter any calculation formula in this field, eg "_5*(7+3)_". When viewing the content type, the result of calculation will be displayed on hover.
 
