@@ -113,7 +113,7 @@ class Calculator implements CalculatorInterface {
   protected function parsePostfix($string) {
     $l = strlen($string);
     $queue = [];
-    // Stack index.
+    // Queue index.
     $j = 0;
     for ($i = 0; $i < $l; $i++) {
       if ($string[$i] === $this->delimiter || in_array($string[$i], $this->signs)) {
@@ -126,7 +126,7 @@ class Calculator implements CalculatorInterface {
         continue;
       }
       if (ctype_digit($string[$i])) {
-        $queue[$j] = isset($queue[$j]) ? $queue[$j] . $queue[$i] : $queue[$i];
+        $queue[$j] = isset($queue[$j]) ? $queue[$j] . $string[$i] : $string[$i];
         continue;
       }
       throw new ArithmeticException('Unallowed character in expression ' . $string);
